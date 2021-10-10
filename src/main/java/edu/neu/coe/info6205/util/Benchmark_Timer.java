@@ -4,10 +4,12 @@
 
 package edu.neu.coe.info6205.util;
 
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
 
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
 
@@ -31,6 +33,7 @@ import static edu.neu.coe.info6205.util.Utilities.formatWhole;
  */
 public class Benchmark_Timer<T> implements Benchmark<T> {
 
+	//InsertionSortTest in = new InsertionSortTest();
     /**
      * Calculate the appropriate number of warmup runs.
      *
@@ -38,9 +41,11 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      * @return at least 2 and at most m/10.
      */
     static int getWarmupRuns(int m) {
+    	System.out.println("No of warmup required" + " : " + Integer.max(2, Integer.min(10, m / 10)));
         return Integer.max(2, Integer.min(10, m / 10));
     }
 
+   // Supplier<T> supplier = InsertionSortTest.helper;
     /**
      * Run function f m times and return the average time in milliseconds.
      *
@@ -51,17 +56,24 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     @Override
     public double runFromSupplier(Supplier<T> supplier, int m) {
         logger.info("Begin run: " + description + " with " + formatWhole(m) + " runs");
+       
+        System.out.println("");
+        
+        
         // Warmup phase
         final Function<T, T> function = t -> {
-            fRun.accept(t);
+        	fRun.accept(t); 
             return t;
         };
+        //System.out.println("Warmup repeat to be run twice Repeat");
         new Timer().repeat(getWarmupRuns(m), supplier, function, fPre, null);
 
+        System.out.println("Warmup done");
         // Timed phase
         return new Timer().repeat(m, supplier, function, fPre, fPost);
     }
 
+    
     /**
      * Constructor for a Benchmark_Timer with option of specifying all three functions.
      *
@@ -116,7 +128,9 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      *                    Function f is the function whose timing you want to measure. For example, you might create a function which sorts an array.
      */
     public Benchmark_Timer(String description, Consumer<T> f) {
-        this(description, null, f, null);
+    	
+    	this(description, null, f, null);
+       
     }
 
     private final String description;

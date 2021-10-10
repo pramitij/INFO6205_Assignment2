@@ -16,6 +16,7 @@ public interface Benchmark<T> {
      * @return the average number of milliseconds taken for each run of function f.
      */
     default double run(T t, int m) {
+    	System.out.println("I am here");
         return runFromSupplier(() -> t, m);
     }
 

@@ -4,13 +4,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.concurrent.TimeUnit;
 
 public class Timer {
 
+	long startTime = 0L;
     /**
      * Construct a new Timer and set it running.
      */
     public Timer() {
+    	
         resume();
     }
 
@@ -54,8 +57,29 @@ public class Timer {
      */
     public <T, U> double repeat(int n, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
         logger.trace("repeat: with " + n + " runs");
-        // TO BE IMPLEMENTED: note that the timer is running when this method is called and should still be running when it returns.
-        return 0;
+        
+        //Pause time for pre-function
+        pause();
+        for (int i =0; i<n;i++) {
+        	T t = supplier.get();
+        
+        	if(preFunction!=null) {
+        		t = preFunction.apply(t);
+     		
+        	}
+        	//Resume time for fRun
+        	resume();
+        	
+        	U u = function.apply(t);
+        	//Pause time for postFunction then continue lap
+        	pauseAndLap();
+        	if(postFunction!=null) {
+        		postFunction.accept(u);
+        	} 
+        }
+        
+        return meanLapTime();
+        
     }
 
     /**
@@ -77,7 +101,10 @@ public class Timer {
      */
     public double meanLapTime() {
         if (running) throw new TimerException();
+        
+        
         return toMillisecs(ticks) / laps;
+        
     }
 
     /**
@@ -87,8 +114,11 @@ public class Timer {
      * @throws TimerException if this Timer is not running.
      */
     public void pauseAndLap() {
-        lap();
+        
+    	lap();
+    	
         ticks += getClock();
+      
         running = false;
     }
 
@@ -98,8 +128,11 @@ public class Timer {
      * @throws TimerException if this Timer is already running.
      */
     public void resume() {
-        if (running) throw new TimerException();
+        
+    	if (running) throw new TimerException();
+       // System.out.println("ticks first value in resume:" + ticks);
         ticks -= getClock();
+        //System.out.println("ticks second value in resume:" + ticks);
         running = true;
     }
 
@@ -111,7 +144,9 @@ public class Timer {
      */
     public void lap() {
         if (!running) throw new TimerException();
+       
         laps++;
+        //System.out.println(laps);
     }
 
     /**
@@ -121,8 +156,10 @@ public class Timer {
      * @throws TimerException if this Timer is not running.
      */
     public void pause() {
-        pauseAndLap();
+     
+    	pauseAndLap();
         laps--;
+        
     }
 
     /**
@@ -173,8 +210,12 @@ public class Timer {
      * @return the number of ticks for the system clock. Currently defined as nano time.
      */
     private static long getClock() {
-        // TO BE IMPLEMENTED
-        return 0;
+    	
+    	//Get system time in nanoseconds
+    	
+    	long startTime = System.nanoTime();  
+    	return startTime;
+        //return 0;
     }
 
     /**
@@ -185,8 +226,12 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        // TO BE IMPLEMENTED
-        return 0;
+    	
+    	//Convert benchmarking time from Nanosecond to Milliseconds
+    	
+    	double durationInMs = ticks/1000000.0;
+    	return durationInMs;
+    	
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);
