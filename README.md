@@ -1,7 +1,7 @@
-# Timer Enhancements and Insertion Sort Analysis
+# Insertion Sort Analysis
 In this assignment, I extended the functionality of a Timer class and analyzed the performance of the Insertion Sort algorithm across various types of arrays. This involved implementing crucial methods in the Timer class to support precise time measurements and conducting a comprehensive benchmark to understand how different array conditions affect the efficiency of Insertion Sort.
 
-## Timer Class Enhancements
+## Timer Class Usage
 I used three methods in the Timer class: `repeat()`, `getClock()`, and `toMillisecs()`. These methods were designed to offer refined control and accuracy in measuring execution time for sorting algorithms, thereby facilitating a reliable benchmarking process.
 
 - `repeat()`: Executes a specified task repeatedly, allowing for an averaged time measurement over multiple runs. This method is crucial for reducing noise in the timing data.
